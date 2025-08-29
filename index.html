@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Luar Angkasa - Mudah</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a, #1a1a4a, #2a2a6a);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #6b5ce7, #a255f7);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 92, 231, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Page 1 Styles */
+        .welcome-text {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(107, 92, 231, 0.5);
+            background: linear-gradient(45deg, #ffffff, #a255f7, #6b5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 100%;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        /* Page 2 Styles */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 30px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .photo-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(45deg, #2a2a6a, #3a3a8a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .revealed-photo {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            display: none;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .revealed-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .photo-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .photo-description {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* Page 3 Styles */
+        .music-player {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .player-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(107, 92, 231, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6b5ce7, #a255f7);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6b5ce7, #a255f7);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Feedback animation */
+        .feedback {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(107, 92, 231, 0.9);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                padding: 20px;
+            }
+            
+            .photo-gallery {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 100%;
+            }
+            
+            .welcome-text {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <!-- Page 1: Welcome Page -->
+        <div class="page active" id="page1">
+            <h1 class="welcome-text">🌌 Tito</h1>
+            <p class="subtitle">
+                Selamat datang! Tekan tombol "Berikutnya".
+            </p>
+            <p class="subtitle">
+                
+            </p>
+        </div>
+
+        <!-- Page 2: Photo Gallery -->
+        <div class="page" id="page2">
+            <h2 class="welcome-text">📸 Galeri Foto</h2>
+            <p class="subtitle">Klik pada kotak untuk melihat foto</p>
+            
+            <div class="photo-gallery">
+                <!-- Foto 1 -->
+                <div class="photo-item" onclick="revealPhoto(0)">
+                    <div class="photo-placeholder">1️⃣</div>
+                    <div class="revealed-photo">
+                        <img src="foto1.jpg" alt="Foto Luar Angkasa 1" onerror="showError(0)" />
+                    </div>
+                    <h3 class="photo-title">Foto Luar Angkasa 1</h3>
+                    <p class="photo-description">Klik untuk melihat foto pertama</p>
+                    <div class="error-message" id="error-0">File foto1.jpg tidak ditemukan</div>
+                </div>
+                
+                <!-- Foto 2 -->
+                <div class="photo-item" onclick="revealPhoto(1)">
+                    <div class="photo-placeholder">2️⃣</div>
+                    <div class="revealed-photo">
+                        <img src="foto2.jpg" alt="Foto Luar Angkasa 2" onerror="showError(1)" />
+                    </div>
+                    <h3 class="photo-title">Foto Luar Angkasa 2</h3>
+                    <p class="photo-description">Klik untuk melihat foto kedua</p>
+                    <div class="error-message" id="error-1">File foto2.jpg tidak ditemukan</div>
+                </div>
+                
+                <!-- Foto 3 -->
+                <div class="photo-item" onclick="revealPhoto(2)">
+                    <div class="photo-placeholder">3️⃣</div>
+                    <div class="revealed-photo">
+                        <img src="foto3.jpg" alt="Foto Luar Angkasa 3" onerror="showError(2)" />
+                    </div>
+                    <h3 class="photo-title">Foto Luar Angkasa 3</h3>
+                    <p class="photo-description">Klik untuk melihat foto ketiga</p>
+                    <div class="error-message" id="error-2">File foto3.jpg tidak ditemukan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Music Player -->
+        <div class="page" id="page3">
+            <div class="music-player">
+                <h2 class="player-title">🎵 Musik Kosmik</h2>
+                <p class="subtitle">Putar musik luar angkasa</p>
+                
+                <div class="controls">
+                    <button class="control-btn" onclick="playPause()">▶️</button>
+                    <button class="control-btn" onclick="stopMusic()">⏹️</button>
+                </div>
+                
+                <div class="progress-container" onclick="seekMusic(event)">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+                
+                <div class="error-message" id="audio-error">File musik.mp3 tidak ditemukan</div>
+                
+                <audio id="space-music" preload="metadata">
+                    <source src="musik.mp3" type="audio/mpeg" onerror="showAudioError()">
+                    Browser tidak mendukung audio
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="btn" id="prev-btn" onclick="prevPage()" disabled>⬅️ Sebelumnya</button>
+        <button class="btn" id="next-btn" onclick="nextPage()">Berikutnya ➡️</button>
+    </div>
+
+    <div class="feedback" id="feedback">✅ Berhasil!</div>
+
+    <script>
+        // Buat bintang-bintang
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 100;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const size = Math.random() * 2 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 4;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Navigasi halaman
+        let currentPage = 1;
+        const totalPages = 3;
+
+        function showPage(pageNumber) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(`page${pageNumber}`).classList.add('active');
+            document.getElementById('prev-btn').disabled = pageNumber === 1;
+            document.getElementById('next-btn').disabled = pageNumber === totalPages;
+            
+            currentPage = pageNumber;
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+                showFeedback('Lanjut ke halaman ' + (currentPage + 1));
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+                showFeedback('Kembali ke halaman ' + (currentPage - 1));
+            }
+        }
+
+        // Fungsi buka/tutup foto
+        function revealPhoto(index) {
+            const photoItems = document.querySelectorAll('.photo-item');
+            const revealedPhoto = photoItems[index].querySelector('.revealed-photo');
+            const placeholder = photoItems[index].querySelector('.photo-placeholder');
+            
+            if (revealedPhoto.style.display === 'block') {
+                revealedPhoto.style.display = 'none';
+                placeholder.style.display = 'flex';
+                showFeedback('Foto ditutup');
+            } else {
+                revealedPhoto.style.display = 'block';
+                placeholder.style.display = 'none';
+                showFeedback('Foto dibuka!');
+                
+                // Cek jika foto error
+                const img = revealedPhoto.querySelector('img');
+                if (img.complete && img.naturalHeight === 0) {
+                    showError(index);
+                }
+            }
+        }
+
+        // Player musik
+        const audio = document.getElementById('space-music');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalTimeDisplay = document.getElementById('total-time');
+
+        function playPause() {
+            if (audio.paused) {
+                audio.play().catch(error => {
+                    showAudioError();
+                });
+                showFeedback('Musik dimulai');
+            } else {
+                audio.pause();
+                showFeedback('Musik dijeda');
+            }
+        }
+
+        function stopMusic() {
+            audio.pause();
+            audio.currentTime = 0;
+            progressBar.style.width = '0%';
+            updateTimeDisplay();
+            showFeedback('Musik dihentikan');
+        }
+
+        function seekMusic(event) {
+            const progressContainer = event.currentTarget;
+            const clickPosition = event.offsetX;
+            const containerWidth = progressContainer.offsetWidth;
+            const seekTime = (clickPosition / containerWidth) * audio.duration;
+            
+            audio.currentTime = seekTime;
+        }
+
+        function updateTimeDisplay() {
+            const currentMinutes = Math.floor(audio.currentTime / 60);
+            const currentSeconds = Math.floor(audio.currentTime % 60);
+            const totalMinutes = Math.floor(audio.duration / 60);
+            const totalSeconds = Math.floor(audio.duration % 60);
+            
+            currentTimeDisplay.textContent = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
+            
+            if (!isNaN(audio.duration)) {
+                totalTimeDisplay.textContent = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+        }
+
+        audio.addEventListener('timeupdate', updateTimeDisplay);
+
+        // Error handling
+        function showError(index) {
+            document.getElementById(`error-${index}`).style.display = 'block';
+        }
+
+        function showAudioError() {
+            document.getElementById('audio-error').style.display = 'block';
+        }
+
+        // Feedback system
+        function showFeedback(message) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 2000);
+        }
+
+        // Inisialisasi
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            showPage(1);
+            
+            // Cek file audio
+            setTimeout(() => {
+                if (audio.error) {
+                    showAudioError();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
